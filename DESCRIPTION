@@ -1,0 +1,17 @@
+Package: epichannel
+Title: An R Package to Create Endemic Channels
+Version: 0.0.0.9000
+Authors@R: 
+    person(given = "Andree",
+           family = "Valle",
+           role = c("aut", "cre"),
+           email = "avallecam@gmail.com",
+           comment = c(ORCID = "0000-0002-7779-481X"))
+Description: Basic functions to create classical endemic channel for Epidemiological Surveillance in Public Health.
+License: GPL-3
+Suggests: 
+    testthat
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 6.1.1
