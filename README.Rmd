@@ -11,6 +11,7 @@ knitr::opts_chunk$set(
   fig.path = "man/figures/README-",
   out.width = "100%"
 )
+knitr::opts_chunk$set(fig.width=10, fig.height=4)
 ```
 # epichannel
 
@@ -19,14 +20,15 @@ knitr::opts_chunk$set(
 [![CRAN status](https://www.r-pkg.org/badges/version/epichannel)](https://cran.r-project.org/package=epichannel)
 <!-- badges: end -->
 
-The goal of epichannel is to ...
+The goal of epichannel is to create classical endemic channel for Epidemiological Surveillance in Public Health.
 
 ## Installation
 
-You can install the released version of epichannel from [CRAN](https://CRAN.R-project.org) with:
+<!-- You can install the released version of epichannel from [CRAN](https://CRAN.R-project.org) with: -->
 
 ``` r
-install.packages("epichannel")
+#install.packages("epichannel")
+devtools::install_github("avallecam/epichannel")
 ```
 
 ## Example
@@ -38,18 +40,87 @@ library(epichannel)
 ## basic example code
 ```
 
-What is special about using `README.Rmd` instead of just `README.md`? You can include R chunks like so:
+- import data
 
-```{r cars}
-summary(cars)
+```{r}
+library(tidyverse)
+
+dengv <-
+  readr::read_csv("https://dengueforecasting.noaa.gov/Training/Iquitos_Training_Data.csv") %>%
+  mutate(year = lubridate::year(week_start_date),
+         epiweek = lubridate::epiweek(week_start_date)) %>%
+  mutate(adm="iquitos") %>%
+  # cases per season - replace wiht a dummy year
+  mutate(year = str_replace(season,"(.+)/(.+)","\\1") %>% as.double())
+
+# dengv %>% count(year,season,lag_year)
+
+dengv %>% glimpse()
+
+# dengv %>%
+#   ggplot(aes(x = week_start_date,y = total_cases)) +
+#   geom_col()
+
+popdb <-
+  readr::read_csv("https://dengueforecasting.noaa.gov/PopulationData/Iquitos_Population_Data.csv") %>%
+  janitor::clean_names() %>%
+  mutate(adm="iquitos")
+
+popdb %>% glimpse()
+
+# popdb %>% count(year)
+# dengv %>% count(year)
+# dengv %>% left_join(popdb)
 ```
 
-You'll still need to render `README.Rmd` regularly, to keep `README.md` up-to-date.
+- first, adapt
 
-You can also embed plots, for example:
-
-```{r pressure, echo = FALSE}
-plot(pressure)
+```{r}
+epi_adapted <-
+  epi_adapt_timeserie(db_disease = dengv,
+                      db_population = popdb,
+                      var_admx = adm,
+                      # var_year = year, # must be a common variable between datasets
+                      # var_week = epiweek,
+                      var_year = year, # not working - need to create pseudo-years
+                      var_week = season_week,
+                      var_event_count = total_cases,
+                      var_population = estimated_population)
 ```
 
-In that case, don't forget to commit and push the resulting figure files, so they display on GitHub!
+- second, filter
+
+```{r}
+disease_now <- epi_adapted %>%
+  filter(var_year==max(var_year))
+
+disease_pre <- epi_adapted %>%
+  filter(var_year!=max(var_year))
+```
+
+- third, create
+
+```{r}
+disease_channel <-
+  epi_create_channel(time_serie = disease_pre,
+                     disease_name = "dengv")
+
+disease_channel
+
+```
+
+- fourth, join and ggplot
+
+```{r}
+epi_join_channel(disease_channel = disease_channel,
+                 disease_now = disease_now) %>%
+  # ggplot
+  epi_plot_channel() +
+  labs(title = "DENGV Endemic Channel. Iquitos, Peru 2008/2009",
+       caption = "Source: https://dengueforecasting.noaa.gov/",
+       # x = "epiweeks",
+       x = "Seasonal week",
+       y = "Number of cases") +
+  theme_bw()
+```
+
