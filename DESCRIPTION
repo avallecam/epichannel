@@ -9,8 +9,10 @@ Authors@R:
            comment = c(ORCID = "0000-0002-7779-481X"))
 Description: Basic functions to create classical endemic channel for Epidemiological Surveillance in Public Health.
 License: GPL-3
+Imports: 
+    tidyverse, dplyr, tidyr, broom, ggplot2
 Suggests: 
-    testthat
+    testthat, janitor
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
