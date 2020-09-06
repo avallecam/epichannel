@@ -1,5 +1,11 @@
 ---
 output: github_document
+editor_options: 
+  chunk_output_type: console
+bibliography: references.bib
+link-citations: yes
+linkcolor: Blue
+urlcolor: Blue
 ---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
@@ -12,6 +18,7 @@ knitr::opts_chunk$set(
   out.width = "100%"
 )
 knitr::opts_chunk$set(fig.width=10, fig.height=4)
+options(tidyverse.quiet = TRUE)
 ```
 # epichannel
 
@@ -40,11 +47,12 @@ library(epichannel)
 ## basic example code
 ```
 
-- import data
+- First, _read_ surveillance data.
 
-```{r}
+```{r,warning=FALSE,message=FALSE}
 library(tidyverse)
 
+# disease dataset
 dengv <-
   readr::read_csv("https://dengueforecasting.noaa.gov/Training/Iquitos_Training_Data.csv") %>%
   mutate(year = lubridate::year(week_start_date),
@@ -53,42 +61,43 @@ dengv <-
   # cases per season - replace wiht a dummy year
   mutate(year = str_replace(season,"(.+)/(.+)","\\1") %>% as.double())
 
-# dengv %>% count(year,season,lag_year)
-
 dengv %>% glimpse()
 
-# dengv %>%
-#   ggplot(aes(x = week_start_date,y = total_cases)) +
-#   geom_col()
-
+# population dataset
 popdb <-
   readr::read_csv("https://dengueforecasting.noaa.gov/PopulationData/Iquitos_Population_Data.csv") %>%
   janitor::clean_names() %>%
   mutate(adm="iquitos")
 
 popdb %>% glimpse()
+```
 
+```{r,echo=FALSE,eval=FALSE}
+# dengv %>% count(year,season,lag_year)
+# dengv %>%
+#   ggplot(aes(x = week_start_date,y = total_cases)) +
+#   geom_col()
 # popdb %>% count(year)
 # dengv %>% count(year)
 # dengv %>% left_join(popdb)
 ```
 
-- first, adapt
+- Second, _adapt_ both datasets
 
 ```{r}
 epi_adapted <-
   epi_adapt_timeserie(db_disease = dengv,
                       db_population = popdb,
                       var_admx = adm,
-                      # var_year = year, # must be a common variable between datasets
-                      # var_week = epiweek,
-                      var_year = year, # not working - need to create pseudo-years
+                      var_year = year, # must be a common variable name between datasets
                       var_week = season_week,
+                      # var_year = year, 
+                      # var_week = epiweek,
                       var_event_count = total_cases,
                       var_population = estimated_population)
 ```
 
-- second, filter
+- Third, _filter_ by year to discriminate between the historical and current data 
 
 ```{r}
 disease_now <- epi_adapted %>%
@@ -98,18 +107,25 @@ disease_pre <- epi_adapted %>%
   filter(var_year!=max(var_year))
 ```
 
-- third, create
+- Fourth, _create_ the __endemic channel__
+
+  + here you can choose between three available methods [@bortman1999elaboracion]:
+    
+    + `"gmean_1sd"` is geometric mean with 1 standard deviation (default). 
+    + `"gmean_2sd"` is geometric mean with 2 sd. 
+    + `"gmean_ci"` is geometric mean with 95 percent confidence intervals.
 
 ```{r}
 disease_channel <-
   epi_create_channel(time_serie = disease_pre,
-                     disease_name = "dengv")
+                     disease_name = "dengv",
+                     method = "gmean_1sd")
 
 disease_channel
 
 ```
 
-- fourth, join and ggplot
+- Finally, _join_ datasets and _plot_ it with ggplot
 
 ```{r}
 epi_join_channel(disease_channel = disease_channel,
@@ -123,4 +139,24 @@ epi_join_channel(disease_channel = disease_channel,
        y = "Number of cases") +
   theme_bw()
 ```
+
+## Contribute
+
+Feel free to fill an issue with a [`reprex`](https://reprex.tidyverse.org/) or implement new methods through a pull request. Here are some alternatives:
+
+- @orellano2011nuevo
+- @Hernández_Arboleda_Arce_Benavides_Tejada_Ramírez_Cubides_2016
+- @Bowman2016
+
+## More
+
+For a more advanced approach into surveillance algorithms refer to the `surveillance` R package and associated publications:
+
+- @hohle2007tt
+- @monitoring2016
+- @modeling2017
+- @germany2016
+
+## References
+
 
