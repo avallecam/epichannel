@@ -16,10 +16,10 @@ Epidemiological Surveillance in Public Health.
 
 ## Installation
 
-<!-- You can install the released version of epichannel from [CRAN](https://CRAN.R-project.org) with: -->
+<!-- You can install the released version of epichannel from [CRAN](https://CRAN.R-project.org) with: install.packages("epichannel") -->
 
 ``` r
-#install.packages("epichannel")
+if(!require("devtools")) install.packages("devtools")
 devtools::install_github("avallecam/epichannel")
 ```
 
