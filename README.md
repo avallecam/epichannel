@@ -195,7 +195,7 @@ For a more advanced approach into surveillance algorithms refer to the
 
 Bortman, Marcelo. 1999. “Elaboración de Corredores O Canales Endémicos
 Mediante Planillas de cálculo.” *Revista Panamericana de Salud Pública*
-5: 1–8.
+5: 1–8. <https://doi.org/10.1590/S1020-49891999000100001>.
 
 </div>
 
@@ -240,6 +240,7 @@ surveillance.” *Journal of Statistical Software* 77 (11): 1–55.
 Orellano, Pablo Wenceslao, and Julieta Itatı́ Reynoso. 2011. “Nuevo
 Método Para Elaborar Corredores Endémicos.” *Revista Panamericana de
 Salud Pública* 29: 309–14.
+<https://doi.org/10.1590/s1020-49892011000500002>.
 
 </div>
 
