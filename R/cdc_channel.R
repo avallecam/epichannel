@@ -23,6 +23,7 @@
 #' @export epi_create_channel
 #' @export epi_join_channel
 #' @export epi_plot_channel
+#' @export epi_observe_alert
 #'
 #' @examples
 #'

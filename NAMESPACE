@@ -3,6 +3,7 @@
 export(epi_adapt_timeserie)
 export(epi_create_channel)
 export(epi_join_channel)
+export(epi_observe_alert)
 export(epi_plot_channel)
 import(broom)
 import(dplyr)
