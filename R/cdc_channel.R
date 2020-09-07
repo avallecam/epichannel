@@ -265,9 +265,11 @@ epi_plot_channel <- function(joined_channel,n_breaks=10) {
   #   select(dist,prov,dpto) %>%
   #   distinct() %>% as.character() %>% paste(collapse = ", ")
   joined_channel %>%
+    group_by(var_admx) %>%
     mutate(new= max(c(var_event_count,upp_95),na.rm = T),
            #plot_name= str_c(dist,"\n",prov,"\n",dpto)
     ) %>%
+    ungroup() %>%
     ggplot(aes(x = var_week, y = var_event_count#, fill=key
     )) +
     geom_area(aes(x=var_week, y=new), fill = "#981000", alpha=0.6, stat="identity")+
@@ -278,4 +280,21 @@ epi_plot_channel <- function(joined_channel,n_breaks=10) {
     scale_x_continuous(breaks = scales::pretty_breaks(n = {{n_breaks}})) #+
   # xlab("semanas") + ylab("N° de casos") #+
   #labs(title = paste0("Distrito de ",plot_name))
+}
+
+#' @describeIn epi_adapt_timeserie create ggplot
+#' @inheritParams epi_adapt_timeserie
+
+epi_observe_alert <- function(joined_channel,threshold=upp_95,alert_distance=3) {
+  joined_channel %>%
+    filter(var_event_count>{{threshold}}) %>%
+    group_by(var_admx) %>%
+    mutate(difference_lag=var_week-lag(var_week),
+           difference_lead=lead(var_week)-var_week) %>%
+    ungroup() %>%
+    rowwise() %>%
+    mutate(difference_min=min(c_across(difference_lag:difference_lead))) %>%
+    ungroup() %>%
+    select(-difference_lag,-difference_lead) %>%
+    filter(difference_min<alert_distance)
 }

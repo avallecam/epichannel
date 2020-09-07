@@ -5,6 +5,7 @@
 \alias{epi_create_channel}
 \alias{epi_join_channel}
 \alias{epi_plot_channel}
+\alias{epi_observe_alert}
 \title{Create an Endemic Channel}
 \usage{
 epi_adapt_timeserie(db_disease, db_population, var_admx, var_year,
@@ -16,6 +17,9 @@ epi_create_channel(time_serie, disease_name = "disease_name",
 epi_join_channel(disease_channel, disease_now, adm_columns = NULL)
 
 epi_plot_channel(joined_channel, n_breaks = 10)
+
+epi_observe_alert(joined_channel, threshold = upp_95,
+  alert_distance = 3)
 }
 \arguments{
 \item{db_disease}{disease surveillance datasets}
@@ -63,6 +67,8 @@ Exploratory Alarm Tool for Outbreak Detection.
 \item \code{epi_join_channel}: join preliminary steps
 
 \item \code{epi_plot_channel}: create ggplot
+
+\item \code{epi_observe_alert}: create ggplot
 }}
 
 \examples{
