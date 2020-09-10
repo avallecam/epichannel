@@ -40,7 +40,7 @@ library(epichannel)
 library(tidyverse)
 
 # disease dataset
-dengv <-
+denv <-
   readr::read_csv("https://dengueforecasting.noaa.gov/Training/Iquitos_Training_Data.csv") %>%
   mutate(year = lubridate::year(week_start_date),
          epiweek = lubridate::epiweek(week_start_date)) %>%
@@ -48,7 +48,7 @@ dengv <-
   # cases per season - replace wiht a dummy year
   mutate(year = str_replace(season,"(.+)/(.+)","\\1") %>% as.double())
 
-dengv %>% glimpse()
+denv %>% glimpse()
 #> Rows: 468
 #> Columns: 12
 #> $ season               <chr> "2000/2001", "2000/2001", "2000/2001", "2...
@@ -84,7 +84,7 @@ popdb %>% glimpse()
 
 ``` r
 epi_adapted <-
-  epi_adapt_timeserie(db_disease = dengv,
+  epi_adapt_timeserie(db_disease = denv,
                       db_population = popdb,
                       var_admx = adm,
                       var_year = year, # must be a common variable name between datasets
@@ -125,7 +125,7 @@ disease_pre <- epi_adapted %>%
 ``` r
 disease_channel <-
   epi_create_channel(time_serie = disease_pre,
-                     disease_name = "dengv",
+                     disease_name = "denv",
                      method = "gmean_1sd")
 #> Joining, by = "var_admx"
 
@@ -133,16 +133,16 @@ disease_channel
 #> # A tibble: 52 x 6
 #>    var_admx var_week median  low_95 upp_95 key  
 #>    <fct>       <dbl>  <dbl>   <dbl>  <dbl> <chr>
-#>  1 iquitos         1   2.80  0.267    6.80 dengv
-#>  2 iquitos         2   2.64  0.484    5.82 dengv
-#>  3 iquitos         3   2.78  0.259    6.75 dengv
-#>  4 iquitos         4   2.86  0.424    6.62 dengv
-#>  5 iquitos         5   2.72  0.454    6.12 dengv
-#>  6 iquitos         6   2.25  0.127    5.44 dengv
-#>  7 iquitos         7   2.22  0.0474   5.52 dengv
-#>  8 iquitos         8   2.34  0.167    5.61 dengv
-#>  9 iquitos         9   1.82 -0.420    5.44 dengv
-#> 10 iquitos        10   2.66 -0.513    8.65 dengv
+#>  1 iquitos         1   2.80  0.267    6.80 denv 
+#>  2 iquitos         2   2.64  0.484    5.82 denv 
+#>  3 iquitos         3   2.78  0.259    6.75 denv 
+#>  4 iquitos         4   2.86  0.424    6.62 denv 
+#>  5 iquitos         5   2.72  0.454    6.12 denv 
+#>  6 iquitos         6   2.25  0.127    5.44 denv 
+#>  7 iquitos         7   2.22  0.0474   5.52 denv 
+#>  8 iquitos         8   2.34  0.167    5.61 denv 
+#>  9 iquitos         9   1.82 -0.420    5.44 denv 
+#> 10 iquitos        10   2.66 -0.513    8.65 denv 
 #> # ... with 42 more rows
 ```
 
@@ -155,7 +155,7 @@ epi_join_channel(disease_channel = disease_channel,
                  disease_now = disease_now) %>%
   # ggplot
   epi_plot_channel() +
-  labs(title = "DENGV Endemic Channel. Iquitos, Peru 2008/2009",
+  labs(title = "Dengue virus Endemic Channel. Iquitos, Peru 2008/2009",
        caption = "Source: https://dengueforecasting.noaa.gov/",
        # x = "epiweeks",
        x = "Seasonal week",

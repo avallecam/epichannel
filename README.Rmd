@@ -53,7 +53,7 @@ library(epichannel)
 library(tidyverse)
 
 # disease dataset
-dengv <-
+denv <-
   readr::read_csv("https://dengueforecasting.noaa.gov/Training/Iquitos_Training_Data.csv") %>%
   mutate(year = lubridate::year(week_start_date),
          epiweek = lubridate::epiweek(week_start_date)) %>%
@@ -61,7 +61,7 @@ dengv <-
   # cases per season - replace wiht a dummy year
   mutate(year = str_replace(season,"(.+)/(.+)","\\1") %>% as.double())
 
-dengv %>% glimpse()
+denv %>% glimpse()
 
 # population dataset
 popdb <-
@@ -73,20 +73,20 @@ popdb %>% glimpse()
 ```
 
 ```{r,echo=FALSE,eval=FALSE}
-# dengv %>% count(year,season,lag_year)
-# dengv %>%
+# denv %>% count(year,season,lag_year)
+# denv %>%
 #   ggplot(aes(x = week_start_date,y = total_cases)) +
 #   geom_col()
 # popdb %>% count(year)
-# dengv %>% count(year)
-# dengv %>% left_join(popdb)
+# denv %>% count(year)
+# denv %>% left_join(popdb)
 ```
 
 - Second, _adapt_ both datasets
 
 ```{r}
 epi_adapted <-
-  epi_adapt_timeserie(db_disease = dengv,
+  epi_adapt_timeserie(db_disease = denv,
                       db_population = popdb,
                       var_admx = adm,
                       var_year = year, # must be a common variable name between datasets
@@ -118,7 +118,7 @@ disease_pre <- epi_adapted %>%
 ```{r}
 disease_channel <-
   epi_create_channel(time_serie = disease_pre,
-                     disease_name = "dengv",
+                     disease_name = "denv",
                      method = "gmean_1sd")
 
 disease_channel
@@ -132,7 +132,7 @@ epi_join_channel(disease_channel = disease_channel,
                  disease_now = disease_now) %>%
   # ggplot
   epi_plot_channel() +
-  labs(title = "DENGV Endemic Channel. Iquitos, Peru 2008/2009",
+  labs(title = "Dengue virus Endemic Channel. Iquitos, Peru 2008/2009",
        caption = "Source: https://dengueforecasting.noaa.gov/",
        # x = "epiweeks",
        x = "Seasonal week",
