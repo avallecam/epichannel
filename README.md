@@ -87,13 +87,13 @@ popdb %>% glimpse()
 epi_adapted <-
   epi_adapt_timeserie(db_disease = denv,
                       db_population = popdb,
-                      var_admx = adm,
-                      var_year = year, # must be a common variable name between datasets
-                      var_week = season_week,
+                      var_admx = adm, # common in denv and popdb
+                      var_year = year, # common in denv and popdb
+                      var_week = season_week, # only in denv
                       # var_year = year, 
                       # var_week = epiweek,
-                      var_event_count = total_cases,
-                      var_population = estimated_population)
+                      var_event_count = total_cases, # only in denv
+                      var_population = estimated_population) # only in popdb
 #> Joining, by = c("var_admx", "var_year")
 ```
 
