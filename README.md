@@ -15,6 +15,8 @@ status](https://www.r-pkg.org/badges/version/epichannel)](https://cran.r-project
 The goal of epichannel is to create classical endemic channel for
 Epidemiological Surveillance in Public Health.
 
+> Find a recent implementation to [build epidemic channels using `{epiCo}`](https://epiverse-trace.github.io/epiCo/articles/endemic_channel.html)
+
 ## Installation
 
 <!-- You can install the released version of epichannel from [CRAN](https://CRAN.R-project.org) with: install.packages("epichannel") -->
